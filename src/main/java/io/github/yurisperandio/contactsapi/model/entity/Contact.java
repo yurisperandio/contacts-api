@@ -20,4 +20,8 @@ public class Contact {
 
     @Column
     private Boolean favorite;
+
+    @Column
+    @Lob
+    private byte[] photo;
 }

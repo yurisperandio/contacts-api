@@ -2,15 +2,18 @@ package io.github.yurisperandio.contactsapi.controller;
 
 import io.github.yurisperandio.contactsapi.model.entity.Contact;
 import io.github.yurisperandio.contactsapi.service.ContactService;
+import jakarta.servlet.http.Part;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/contact")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ContactController {
 
     private final ContactService service;
@@ -33,8 +36,12 @@ public class ContactController {
     }
 
     @PatchMapping("/{id}/favorite")
-    public void favorite(@PathVariable Integer id, @RequestBody Boolean favorite){
-        service.favorite(id, favorite);
+    public void favorite(@PathVariable Integer id){
+        service.favorite(id);
     }
 
+    @PutMapping("{id}/photo")
+    public Serializable addPhoto(@PathVariable Integer id, @RequestParam("photo") Part file){
+        return service.addPhoto(id, file);
+    }
 }

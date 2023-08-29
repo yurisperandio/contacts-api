@@ -2,10 +2,14 @@ package io.github.yurisperandio.contactsapi.service;
 
 import io.github.yurisperandio.contactsapi.model.entity.Contact;
 import io.github.yurisperandio.contactsapi.model.repository.ContactRepository;
+import jakarta.servlet.http.Part;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +31,29 @@ public class ContactService {
         return repository.findAll();
     }
 
-    public void favorite(Integer id, Boolean favorite) {
+    public void favorite(Integer id) {
         Optional<Contact> contact = repository.findById(id);
         contact.ifPresent(c -> {
-            c.setFavorite(favorite);
+            boolean favorite = c.getFavorite() == Boolean.TRUE;
+            c.setFavorite(!favorite);
             repository.save(c);
         });
+    }
+
+    public Serializable addPhoto(Integer id, Part file) {
+        Optional<Contact> contact = repository.findById(id);
+        return contact.map(c -> {
+            try{
+                InputStream is = file.getInputStream();
+                byte[] bytes = new byte[(int) file.getSize()];
+                IOUtils.readFully(is, bytes);
+                c.setPhoto(bytes);
+                repository.save(c);
+                is.close();
+                return bytes;
+            }catch (IOException e){
+                return e;
+            }
+        }).orElse(null);
     }
 }
