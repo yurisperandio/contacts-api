@@ -5,6 +5,10 @@ import io.github.yurisperandio.contactsapi.model.repository.ContactRepository;
 import jakarta.servlet.http.Part;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,8 +31,8 @@ public class ContactService {
         repository.deleteById(id);
     }
 
-    public List<Contact> findAll(){
-        return repository.findAll();
+    public Page<Contact> findAll(PageRequest pageRequest){
+        return repository.findAll(pageRequest);
     }
 
     public void favorite(Integer id) {

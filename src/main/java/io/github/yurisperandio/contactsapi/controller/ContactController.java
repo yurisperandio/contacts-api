@@ -4,6 +4,9 @@ import io.github.yurisperandio.contactsapi.model.entity.Contact;
 import io.github.yurisperandio.contactsapi.service.ContactService;
 import jakarta.servlet.http.Part;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +34,10 @@ public class ContactController {
     }
 
     @GetMapping
-    public List<Contact> findContact(){
-        return service.findAll();
+    public Page<Contact> findContact(@RequestParam(value="page", defaultValue = "0") Integer page,
+                                     @RequestParam(value = "size", defaultValue = "10") Integer size){
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("name").ascending());
+        return service.findAll(pageRequest);
     }
 
     @PatchMapping("/{id}/favorite")
